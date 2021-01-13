@@ -1,0 +1,68 @@
+# This file is for Skaffold
+# Skaffold handles the workflow for building, pushing and deploying your application in K8s
+
+apiVersion: skaffold/v2alpha3
+kind: Config
+deploy:
+  kubectl: 
+    # all the k8s yaml depl files are in this directory, watch these and apply (k apply -f .)
+    # CRUD depl files on start and end
+    manifests:
+      - ./infra/k8s/*
+build:
+  # should images be pushed to a registry. If not specified, images are pushed only if the current Kubernetes context connects to a remote cluster.
+    local:
+      push: false
+  
+    artifacts:
+      # name of the image to be built.
+      - image: nickyiliwang/client
+      # directory containing the artifact's sources.
+        context: client
+        docker: 
+          dockerfile: Dockerfile
+        sync:
+        # we want to match all js files in our clients directory, unless we are adding new dependencies, all js file changes are just copied instead of rebuilding the docker image
+          manual:
+            - src: 'src/**/*.js'
+              dest: .
+      - image: nickyiliwang/comments
+        context: comments
+        docker: 
+          dockerfile: Dockerfile
+        sync:
+          manual:
+            - src: '*.js'
+              dest: .
+      - image: nickyiliwang/query
+        context: query
+        docker: 
+          dockerfile: Dockerfile
+        sync:
+          manual:
+            - src: '*.js'
+              dest: .
+      - image: nickyiliwang/event-bus
+        context: event-bus
+        docker: 
+          dockerfile: Dockerfile
+        sync:
+          manual:
+            - src: '*.js'
+              dest: .
+      - image: nickyiliwang/posts
+        context: posts
+        docker: 
+          dockerfile: Dockerfile
+        sync:
+          manual:
+            - src: '*.js'
+              dest: .
+      - image: nickyiliwang/moderation
+        context: moderation
+        docker: 
+          dockerfile: Dockerfile
+        sync:
+          manual:
+            - src: '*.js'
+              dest: .

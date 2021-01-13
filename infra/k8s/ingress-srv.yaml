@@ -1,0 +1,34 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: ingress-srv
+  annotations:
+    # this is where is gets routing rules
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/use-regex: 'true'
+spec:
+  rules:
+    - host: posts.com
+    # These paths are ordered from greatest importance to lease important
+      http:
+        paths:
+          - path: /posts/create
+            backend:
+              serviceName: posts-clusterip-srv
+              servicePort: 4000
+          - path: /posts
+            backend:
+              serviceName: query-srv
+              servicePort: 4002
+            # no error above
+
+            # NGINX doesn't support wildcard so we are using regex, this is for /:id/ 
+          - path: /posts/?(.*)/comments
+            backend:
+              serviceName: comments-srv
+              servicePort: 4001
+            # this path is fine for this, but for react-router SPAs, we need to use /?(.*) for it to work
+          - path: /?(.*)
+            backend:
+              serviceName: client-srv
+              servicePort: 3000
