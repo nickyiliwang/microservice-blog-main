@@ -145,3 +145,7 @@ VERB.
 2: to ask questions about especially in order to resolve a doubt
 3: to put as a question
 4: to mark with a query
+
+# Why do we need a query service ?
+
+When we want to get every posts and comments created, typically we can get it from the posts and comments services, but doing that means we are making two api calls, having the query service we have the data we need in just one go.
